@@ -19,7 +19,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 
-COPY ./curitibano.blazor.junino ./curitibano.blazor.junino
+COPY . .
 
 WORKDIR "/src/curitibano.blazor.junino"
 RUN dotnet restore "curitibano.blazor.junino.csproj"
