@@ -8,13 +8,13 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore "curitibano.microservico.junina.csproj"
-RUN dotnet build "curitibano.microservico.junina.csproj" -c Release -o /app/build
+RUN dotnet restore "curitibano.blazor.junino.csproj"
+RUN dotnet build "curitibano.blazor.junino.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "curitibano.microservico.junina.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "curitibano.blazor.junino.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "curitibano.microservico.junina.dll"]
+ENTRYPOINT ["dotnet", "curitibano.blazor.junino.dll"]
