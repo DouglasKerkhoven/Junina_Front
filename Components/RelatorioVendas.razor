@@ -1,0 +1,57 @@
+﻿@page "/relatorio-vendas"
+@using curitibano.blazor.junino.Service
+@inject VendasService VendasService
+
+<h2 class="mb-4">Relatório de Vendas</h2>
+
+@if (vendas == null)
+{
+    <p>A carregar vendas...</p>
+}
+else if (!vendas.Any())
+{
+    <p class="text-muted">Nenhuma venda registrada.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Data</th>
+                <th>Item</th>
+                <th>Quantidade</th>
+                <th>Valor Unitário</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venda in vendas)
+            {
+                <tr>
+                    <td>@venda.Id</td>
+                    <td>@venda.DataVenda.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@venda.Item?.Descricao</td>
+                    <td>@venda.Quantidade</td>
+                    <td>@venda.Item?.Valor.ToString("C")</td>
+                    <td>@venda.ValorTotal.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-success">
+                <td colspan="5" class="text-end"><strong>Total Geral:</strong></td>
+                <td><strong>@vendas.Sum(v => v.ValorTotal).ToString("C")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+@code {
+    private List<Venda>? vendas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        vendas = await VendasService.ObterTodos();
+    }
+}

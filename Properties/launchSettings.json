@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+    "profiles": {
+      "http": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "http://localhost:5098",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      },
+      "https": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "https://192.168.10.237:7032;http://192.168.10.237:5098",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "URL_JUNINA_API": "https://localhost:7218/"
+        }
+      }
+    }
+  }

@@ -1,0 +1,100 @@
+﻿
+@page "/vendas"
+@using curitibano.blazor.junino.Service
+@inject ItemService ItemService
+@inject NavigationManager NavigationManager
+
+<h2 class="mb-4">Registrar Venda</h2>
+
+@if (itensVenda == null)
+{
+    <p>A carregar itens...</p>
+}
+else if (itensVenda.Count == 0)
+{
+    <p class="text-danger">Nenhum item disponível em estoque.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Estoque</th>
+                <th>Valor</th>
+                <th>Quantidade a vender</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in itensVenda)
+            {
+                <tr>
+                    <td>@item.Descricao</td>
+                    <td>@item.Quantidade</td>
+                    <td>@item.Valor.ToString("C")</td>
+                    <td>
+                        <input type="number" class="form-control" min="0" max="@item.Quantidade" @bind="item.QuantidadeVenda" />
+                    </td>
+                    <td>@(item.QuantidadeVenda * item.Valor)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h4>Total da Venda: <span class="text-success">@TotalVenda.ToString("C")</span></h4>
+        <button class="btn btn-primary" @onclick="ConfirmarVenda">Confirmar Venda</button>
+    </div>
+}
+
+@code {
+    private List<ItemVendaViewModel>? itensVenda;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var itens = await ItemService.ObterTodos();
+        itensVenda = itens?.Select(i => new ItemVendaViewModel
+            {
+                Id = i.Id,
+                Descricao = i.Descricao,
+                Valor = i.Valor,
+                Quantidade = i.Quantidade
+            }).ToList();
+    }
+
+    private decimal TotalVenda => itensVenda?.Sum(i => i.QuantidadeVenda * i.Valor) ?? 0;
+
+    private async Task ConfirmarVenda()
+    {
+        if (itensVenda == null) return;
+
+        foreach (var item in itensVenda.Where(i => i.QuantidadeVenda > 0))
+        {
+            var command = new BaixarItemCommand
+                {
+                    ItemId = item.Id,
+                    QtdVendida = item.QuantidadeVenda
+                };
+
+            await ItemService.DarBaixa(item.Id, item.QuantidadeVenda);
+        }
+
+        NavigationManager.NavigateTo("/itens");
+    }
+
+    public class ItemVendaViewModel
+    {
+        public int Id { get; set; }
+        public string Descricao { get; set; } = string.Empty;
+        public int Quantidade { get; set; }
+        public decimal Valor { get; set; }
+        public int QuantidadeVenda { get; set; } = 0;
+    }
+
+    public class BaixarItemCommand
+    {
+        public int ItemId { get; set; }
+        public int QtdVendida { get; set; }
+    }
+}

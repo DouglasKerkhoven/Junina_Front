@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\curitibano.blazor.junino.props" />
+</Project>

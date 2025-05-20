@@ -1,0 +1,86 @@
+﻿@page "/itens"
+@using curitibano.blazor.junino.Service
+@inject ItemService ItemService
+
+<h2 class="text-2xl font-bold mb-4">Estoque da Festa Junina</h2>
+
+@if (itens == null)
+{
+    <p class="text-gray-500">A carregar itens...</p>
+}
+else
+{
+    <div class="mb-4 flex gap-4">
+        <button class="btn btn-primary" @onclick="MostrarFormularioAdicionar">Adicionar Novo Item</button>
+    </div>
+
+    @if (mostrarFormularioAdicionar)
+    {
+        <div class="p-4 mb-4 bg-light border rounded">
+            <h3 class="h5 mb-3">Novo Item</h3>
+            <div class="mb-2">
+                <input type="text" placeholder="Descrição" @bind="novoItem.Descricao" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <input type="number" placeholder="Quantidade" @bind="novoItem.Quantidade" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <input type="number" step="0.01" placeholder="Valor" @bind="novoItem.Valor" class="form-control" />
+            </div>
+            <button class="btn btn-success" @onclick="AdicionarItem">Salvar</button>
+        </div>
+    }
+
+    <div class="row">
+        @foreach (var item in itens)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Descricao</h5>
+                        <p class="card-text">Quantidade: @item.Quantidade</p>
+                        <p class="card-text text-success">Preço: @item.Valor.ToString("C")</p>
+                        <a class="btn btn-warning btn-sm me-2" @onclick="() => EditarItem(item)">Editar</a>
+                        <a class="btn btn-danger btn-sm me-2" @onclick="() => ExcluirItem(item.Id)">Excluir</a>
+                        <a class="btn btn-info btn-sm" href="/itens/baixa/@item.Id">Dar Baixa</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Item>? itens;
+    private bool mostrarFormularioAdicionar = false;
+    private Item novoItem = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        itens = await ItemService.ObterTodos();
+    }
+
+    private void MostrarFormularioAdicionar()
+    {
+        mostrarFormularioAdicionar = true;
+        novoItem = new();
+    }
+
+    private async Task AdicionarItem()
+    {
+        await ItemService.Adicionar(novoItem);
+        itens = await ItemService.ObterTodos();
+        mostrarFormularioAdicionar = false;
+    }
+
+    private void EditarItem(Item item)
+    {
+        // Lógica para editar item futuramente
+    }
+
+    private async Task ExcluirItem(int id)
+    {
+        await ItemService.Excluir(id);
+        itens = await ItemService.ObterTodos();
+    }
+}

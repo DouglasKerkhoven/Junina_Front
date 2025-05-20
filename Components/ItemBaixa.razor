@@ -1,0 +1,77 @@
+﻿@page "/itens/baixa/{id:int}"
+@using curitibano.blazor.junino.Service
+@inject ItemService ItemService
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-3">Registrar Venda de Item</h3>
+
+@if (item == null)
+{
+    <p class="text-muted">A carregar item...</p>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.Descricao</h5>
+            <p class="card-text">Estoque disponível: @item.Quantidade</p>
+
+            @if (item.Quantidade == 0)
+            {
+                <p class="text-danger">Sem estoque disponível para venda.</p>
+                <a class="btn btn-secondary" href="/itens">Voltar</a>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <label for="quantidade" class="form-label">Quantidade a vender:</label>
+                    <input type="number" id="quantidade" class="form-control" min="1" max="@item.Quantidade" @bind="quantidadeVenda" />
+                </div>
+                <p>Total: <strong>@(item.Valor * quantidadeVenda):C</strong></p>
+
+                <button class="btn btn-danger me-2" @onclick="ConfirmarBaixa">Confirmar Venda</button>
+                <a class="btn btn-secondary" href="/itens">Cancelar</a>
+            }
+        </div>
+    </div>
+
+    @if (quantidadeVenda > 0)
+    {
+        <div class="alert alert-info">
+            <strong>Resumo:</strong> Venda de @quantidadeVenda unidade(s) do item <strong>@item.Descricao</strong> totalizando <strong>@(item.Valor * quantidadeVenda)</strong>.
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Item? item;
+    private int quantidadeVenda = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        item = await ItemService.ObterPorId(id);
+    }
+
+    private async Task ConfirmarBaixa()
+    {
+        if (item != null && item.Quantidade >= quantidadeVenda)
+        {
+            var command = new BaixarItemCommand
+                {
+                    ItemId = item.Id,
+                    QtdVendida = quantidadeVenda
+                };
+
+            await ItemService.DarBaixa(item.Id, quantidadeVenda);
+        }
+
+        NavigationManager.NavigateTo("/itens");
+    }
+
+    public class BaixarItemCommand
+    {
+        public int ItemId { get; set; }
+        public int QtdVendida { get; set; }
+    }
+}
