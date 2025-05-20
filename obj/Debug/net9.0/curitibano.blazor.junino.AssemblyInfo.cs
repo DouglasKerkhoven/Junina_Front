@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("curitibano.blazor.junino")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6402a9e0d985ca2ca91703a1d2e3a82845d4864c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dbabcf2fdca5d7a8884b969e97725ed538bcb593")]
 [assembly: System.Reflection.AssemblyProductAttribute("curitibano.blazor.junino")]
 [assembly: System.Reflection.AssemblyTitleAttribute("curitibano.blazor.junino")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

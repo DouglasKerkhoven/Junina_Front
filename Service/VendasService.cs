@@ -1,9 +1,11 @@
-﻿namespace curitibano.blazor.junino.Service
+﻿using System;
+
+namespace curitibano.blazor.junino.Service
 {
     public class VendasService
     {
         private readonly HttpClient _http;
-
+        private string url { get; set; } = Environment.GetEnvironmentVariable("URL_JUNINA_API");
         public VendasService(HttpClient http)
         {
             _http = http;
@@ -11,7 +13,7 @@
 
         public async Task<List<Venda>> ObterTodos()
         {
-            return await _http.GetFromJsonAsync<List<Venda>>("api/vendas");
+            return await _http.GetFromJsonAsync<List<Venda>>($"{url}api/vendas");
         }
     }
 

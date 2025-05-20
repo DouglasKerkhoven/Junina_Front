@@ -3,7 +3,7 @@
     public class ItemService
     {
         private readonly HttpClient _http;
-
+        private string url { get; set; } = Environment.GetEnvironmentVariable("URL_JUNINA_API");
         public ItemService(HttpClient http)
         {
             _http = http;
@@ -11,28 +11,28 @@
 
         public async Task<List<Item>> ObterTodos()
         {
-            return await _http.GetFromJsonAsync<List<Item>>("api/item");
+            return await _http.GetFromJsonAsync<List<Item>>($"{url}api/item");
         }
 
         public async Task<Item?> ObterPorId(int id)
         {
-            return await _http.GetFromJsonAsync<Item>($"api/item/id/{id}");
+            return await _http.GetFromJsonAsync<Item>($"{url}api/item/id/{id}");
         }
 
         public async Task Adicionar(Item item)
         {
-            await _http.PostAsJsonAsync("api/item", item);
+            await _http.PostAsJsonAsync($"{url}api/item", item);
         }
 
         public async Task Excluir(int id)
         {
-            await _http.DeleteAsync($"api/item/id/{id}");
+            await _http.DeleteAsync($"{url}api/item/id/{id}");
         }
 
         public async Task Atualizar(Item item)
         {
             // PATCH requer o uso de HttpRequestMessage
-            var request = new HttpRequestMessage(HttpMethod.Patch, $"api/item/id/{item.Id}")
+            var request = new HttpRequestMessage(HttpMethod.Patch, $"{url}api/item/id/{item.Id}")
             {
                 Content = JsonContent.Create(item)
             };
@@ -45,7 +45,7 @@
             {
                 Content = JsonContent.Create(command)
             };*/
-            await _http.PatchAsJsonAsync("api/item/baixa", new { ItemId = id , QtdVendida = qtd });
+            await _http.PatchAsJsonAsync($"{url}api/item/baixa", new { ItemId = id , QtdVendida = qtd });
 
 
 
