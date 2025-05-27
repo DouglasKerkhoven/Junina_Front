@@ -3,7 +3,7 @@
     public class ItemService
     {
         private readonly HttpClient _http;
-        private string url { get; set; } = Environment.GetEnvironmentVariable("URL_JUNINA_API");
+        private string url { get; set; } = Environment.GetEnvironmentVariable("/URL_JUNINA_API");
         public ItemService(HttpClient http)
         {
             _http = http;
@@ -39,13 +39,13 @@
             await _http.SendAsync(request);
         }
 
-        public async Task DarBaixa(int id, int qtd)
+        public async Task DarBaixa(int id, int qtd,int pagamentoId)
         {
             /*var request = new HttpRequestMessage(HttpMethod.Patch, $"api/item/baixa/")
             {
                 Content = JsonContent.Create(command)
             };*/
-            await _http.PatchAsJsonAsync($"{url}api/item/baixa", new { ItemId = id , QtdVendida = qtd });
+            await _http.PatchAsJsonAsync($"{url}api/item/baixa", new { ItemId = id , QtdVendida = qtd, FormaId = pagamentoId});
 
 
 

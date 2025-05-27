@@ -63,7 +63,7 @@ else
                     QtdVendida = quantidadeVenda
                 };
 
-            await ItemService.DarBaixa(item.Id, quantidadeVenda);
+            await ItemService.DarBaixa(item.Id, quantidadeVenda,0);
         }
 
         NavigationManager.NavigateTo("/itens");

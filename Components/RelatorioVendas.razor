@@ -4,6 +4,20 @@
 
 <h2 class="mb-4">Relatório de Vendas</h2>
 
+<div class="row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+        <label for="inicio" class="form-label">Data Início</label>
+        <input type="date" id="inicio" class="form-control" @bind="Inicio" />
+    </div>
+    <div class="col-md-4">
+        <label for="fim" class="form-label">Data Fim</label>
+        <input type="date" id="fim" class="form-control" @bind="Fim" />
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-primary" @onclick="Filtrar">Filtrar</button>
+    </div>
+</div>
+
 @if (vendas == null)
 {
     <p>A carregar vendas...</p>
@@ -23,6 +37,7 @@ else
                 <th>Quantidade</th>
                 <th>Valor Unitário</th>
                 <th>Total</th>
+                <th>Forma Pagamento</th>
             </tr>
         </thead>
         <tbody>
@@ -35,12 +50,13 @@ else
                     <td>@venda.Quantidade</td>
                     <td>@venda.Item?.Valor.ToString("C")</td>
                     <td>@venda.ValorTotal.ToString("C")</td>
+                    <td>@(ObterFormaPagamento(venda.FormaId))</td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr class="table-success">
-                <td colspan="5" class="text-end"><strong>Total Geral:</strong></td>
+                <td colspan="5" class="text-end"><strong>Total:</strong></td>
                 <td><strong>@vendas.Sum(v => v.ValorTotal).ToString("C")</strong></td>
             </tr>
         </tfoot>
@@ -49,9 +65,31 @@ else
 
 @code {
     private List<Venda>? vendas;
+    private DateTime Inicio { get; set; } = DateTime.Today.AddDays(-7);
+    private DateTime Fim { get; set; } = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
-        vendas = await VendasService.ObterTodos();
+        await Filtrar();
+    }
+
+    private async Task Filtrar()
+    {
+        vendas = await VendasService.ObterTodosPorData(Inicio, Fim);
+    }
+
+    private string ObterFormaPagamento(int id)
+    {
+
+            if (id == 1)
+            return "Dinheiro";
+            else if (id == 2)
+            return "Pix";
+            else if (id == 3)
+            return "Debito";
+            else if (id == 4)
+            return "Credito";
+            else
+            return "Não indetificado";
     }
 }
