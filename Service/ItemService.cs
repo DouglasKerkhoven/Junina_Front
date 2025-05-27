@@ -3,7 +3,7 @@
     public class ItemService
     {
         private readonly HttpClient _http;
-        private string url { get; set; } = Environment.GetEnvironmentVariable("/URL_JUNINA_API");
+        private string url { get; set; } = Environment.GetEnvironmentVariable("URL_JUNINA_API/");
         public ItemService(HttpClient http)
         {
             _http = http;
