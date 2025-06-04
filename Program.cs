@@ -12,10 +12,13 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        var apiUrl = builder.Configuration["URL_JUNINA_API"]
+             ?? Environment.GetEnvironmentVariable("URL_JUNINA_API/")
+             ?? "http://localhost:5000";
 
         builder.Services.AddScoped(sp => new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7218/") // URL da tua API
+            BaseAddress = new Uri(apiUrl)
         });
 
 
