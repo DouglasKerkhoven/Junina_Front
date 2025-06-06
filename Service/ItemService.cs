@@ -32,11 +32,7 @@
         public async Task Atualizar(Item item)
         {
             // PATCH requer o uso de HttpRequestMessage
-            var request = new HttpRequestMessage(HttpMethod.Patch, $"{url}api/item/id/{item.Id}")
-            {
-                Content = JsonContent.Create(item)
-            };
-            await _http.SendAsync(request);
+            await _http.PatchAsJsonAsync($"{url}api/item/id/{item.Id}", item);
         }
 
         public async Task DarBaixa(int id, int qtd,int pagamentoId)

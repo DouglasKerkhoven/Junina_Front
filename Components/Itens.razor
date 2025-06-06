@@ -40,7 +40,7 @@ else
                         <h5 class="card-title">@item.Descricao</h5>
                         <p class="card-text">Quantidade: @item.Quantidade</p>
                         <p class="card-text text-success">Preço: @item.Valor.ToString("C")</p>
-                        <a class="btn btn-warning btn-sm me-2" @onclick="() => EditarItem(item)">Editar</a>
+                        <a class="btn btn-warning btn-sm me-2" @onclick="() => AbrirModalEditar(item)">Editar</a>
                         <a class="btn btn-danger btn-sm me-2" @onclick="() => ExcluirItem(item.Id)">Excluir</a>
                         <a class="btn btn-info btn-sm" href="/itens/baixa/@item.Id">Dar Baixa</a>
                     </div>
@@ -50,10 +50,45 @@ else
     </div>
 }
 
+@if (mostrarModalEditar)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Item</h5>
+                    <button type="button" class="btn-close" @onclick="FecharModalEditar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>Descrição:</label>
+                        <input type="text" class="form-control" @bind="itemParaEditar.Descricao" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Quantidade:</label>
+                        <input type="number" class="form-control" @bind="itemParaEditar.Quantidade" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Valor:</label>
+                        <input type="number" step="0.01" class="form-control" @bind="itemParaEditar.Valor" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="FecharModalEditar">Cancelar</button>
+                    <button class="btn btn-primary" @onclick="SalvarEdicao">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Item>? itens;
     private bool mostrarFormularioAdicionar = false;
     private Item novoItem = new();
+
+    private bool mostrarModalEditar = false;
+    private Item? itemParaEditar;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,9 +108,38 @@ else
         mostrarFormularioAdicionar = false;
     }
 
-    private void EditarItem(Item item)
+    private void AbrirModalEditar(Item item)
     {
-        // Lógica para editar item futuramente
+        itemParaEditar = new Item
+            {
+                Id = item.Id,
+                Descricao = item.Descricao,
+                Quantidade = item.Quantidade,
+                Valor = item.Valor
+            };
+        mostrarModalEditar = true;
+    }
+
+    private void FecharModalEditar()
+    {
+        mostrarModalEditar = false;
+        itemParaEditar = null;
+    }
+
+    private async Task SalvarEdicao()
+    {
+        if (itemParaEditar != null)
+        {
+            await EditarItem(itemParaEditar);
+            FecharModalEditar();
+        }
+    }
+
+    private async Task EditarItem(Item item)
+    {
+        await ItemService.Atualizar(item);
+        itens = await ItemService.ObterTodos();
+        mostrarFormularioAdicionar = false;
     }
 
     private async Task ExcluirItem(int id)
